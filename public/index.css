@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#log {
+    height: 95vh;
+    background: #D7CCC8;
+    padding: 25px;
+}
+
+#message {
+    height: 5vh;
+    width: 100%;
+    appearance: none;
+    border: none;
+    font-size: 18px;
+    padding: 20px;
+    border-radius: 0;
+}
