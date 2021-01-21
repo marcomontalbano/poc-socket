@@ -174,22 +174,45 @@ describe('socket-server', () => {
 
     describe(`when client doesn't have a "code"`, () => {
 
-        let client: Socket
+        let client1: Socket
+        let client2: Socket
 
         beforeEach(() => {
             uuidv4.mockReset()
-            client = io(serverConfig.uri, {
+
+            client1 = io(serverConfig.uri, {
                 query: `name=App1`
-            });
+            })
+
+            client2 = io(serverConfig.uri, {
+                query: `name=App1`
+            })
         })
 
         afterEach(() => {
-            client.disconnect()
+            client1.disconnect()
+            client2.disconnect()
         })
 
         it('should send an "initialize" event with the generated code', async () => {
-            uuidv4.mockReturnValue('new-uuid');
-            await expect(promisifyOn(client, 'initialize')).resolves.toEqual('new-uuid')
+            uuidv4
+                .mockReturnValueOnce('new-uuid1')
+                .mockReturnValueOnce('new-uuid2')
+
+            await expect(promisifyOn(client1, 'initialize')).resolves.toEqual('new-uuid1')
+            await expect(promisifyOn(client2, 'initialize')).resolves.toEqual('new-uuid2')
+        })
+
+        it('should not generate the same code twice', async () => {
+            uuidv4
+                .mockReturnValueOnce('new-uuid1')
+                .mockReturnValueOnce('new-uuid1')
+                .mockReturnValueOnce('new-uuid1')
+                .mockReturnValueOnce('new-uuid1')
+                .mockReturnValueOnce('new-uuid2')
+
+            await expect(promisifyOn(client1, 'initialize')).resolves.toEqual('new-uuid1')
+            await expect(promisifyOn(client2, 'initialize')).resolves.toEqual('new-uuid2')
         })
     })
 

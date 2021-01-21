@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io'
-import { v4 as uuidv4 } from 'uuid'
+import { v4 } from 'uuid'
 import * as http from 'http'
 
 type Props = {
@@ -12,6 +12,20 @@ type Query = {
     name?: string;
 }
 
+const rooms = new Set();
+
+const uuidv4 = (name?: string) => {
+    let room: string;
+    let code: string;
+    
+    do {
+        code = v4();
+        room = `${name}-${code}`;
+    } while (rooms.has(room))
+
+    return code;
+}
+
 export const connect = ({ srv, corsOrigin }: Props): Server => {
 
     const io = new Server(srv, {
@@ -19,7 +33,7 @@ export const connect = ({ srv, corsOrigin }: Props): Server => {
     });
 
     io.on('connection', (socket: Socket) => {
-        const { name, code = uuidv4() } = socket.handshake.query as Query
+        const { name, code = uuidv4(name) } = socket.handshake.query as Query
 
         if (typeof name !== 'string' || name === '') {
             socket.emit('initialize_error', '"name" is not defined.')
@@ -29,11 +43,17 @@ export const connect = ({ srv, corsOrigin }: Props): Server => {
 
         const room = `${name}-${code}`;
 
+        rooms.add(room);
+
         socket.join(room)
 
         socket.emit('initialize', code)
 
-        socket.on('disconnect', () => {})
+        socket.on('disconnect', () => {
+            if (io.sockets.adapter.rooms.get(room) === undefined) {
+                rooms.delete(room);
+            }
+        })
 
         socket.on('message', (message: string) => {
             io.to(room).emit('message', message)
