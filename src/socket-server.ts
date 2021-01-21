@@ -1,29 +1,35 @@
 import { Server, Socket } from 'socket.io'
+import { v4 as uuidv4 } from 'uuid'
+import * as http from 'http'
 
-const port = parseInt(process.env.PORT || '3000');
-
-const origin = [
-    'http://localhost:1234'
-];
-
-const io = new Server(port, {
-    cors: { origin }
-});
+type Props = {
+    srv: number | http.Server;
+    corsOrigin?: string | string[];
+}
 
 type Query = {
     code?: string
 }
 
-io.on('connection', (socket: Socket) => {
-    const { code }: Query = socket.handshake.query
+export const connect = ({ srv, corsOrigin }: Props): Server => {
 
-    socket.join(code)
+    const io = new Server(srv, {
+        cors: { origin: corsOrigin }
+    });
 
-    socket.emit('initialized', code)
+    io.on('connection', (socket: Socket) => {
+        const { code = uuidv4() }: Query = socket.handshake.query
 
-    socket.on('disconnect', () => {})
+        socket.join(code)
 
-    socket.on('message', (message: string) => {
-        io.to(code).emit('message', message)
+        socket.emit('initialized', code)
+
+        socket.on('disconnect', () => {})
+
+        socket.on('message', (message: string) => {
+            io.to(code).emit('message', message)
+        })
     })
-})
+
+    return io;
+}

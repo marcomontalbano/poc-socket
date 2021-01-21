@@ -1,15 +1,15 @@
-import { io } from 'socket.io-client'
-import { v4 as uuidv4 } from 'uuid'
+import { io, Socket } from 'socket.io-client'
 
-const newCode = `#${uuidv4()}`;
-const existingCode = location.hash;
-const code = existingCode || newCode;
-const isNewCode = newCode === code;
-
-if (isNewCode) {
-    location.hash = code;
+type Props = {
+    uri: string;
+    code?: string;
 }
 
-export const socket = io('localhost:3000', {
-    query: `code=${code}`
-})
+export const connect = ({ uri, code }: Props): Socket => {
+
+    const socket = io(uri, {
+        query: code && `code=${code}`
+    })
+
+    return socket;
+}

@@ -1,4 +1,13 @@
-import { socket } from '../src/socket-client'
+import { connect } from '../src/socket-client'
+
+const socket = connect({
+    uri: 'localhost:3000',
+    code: location.hash ? location.hash.replace(/^#/, '') : null
+});
+
+socket.on('initialized', code => {
+    location.hash = code;
+})
 
 socket.on('message', (message: string) => {
     const div = document.createElement('div');
