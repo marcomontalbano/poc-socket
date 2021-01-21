@@ -42,7 +42,7 @@ afterAll((done) => {
     });
 });
 
-const promisifyOn = (client, event) => {
+const promisifyOn = (client: Socket, event: string) => {
     return new Promise((resolve) => {
         client.on(event, resolve)
     })

@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 import { connect } from './src/socket-server'
 
 const corsOrigin = process.env.CORS_ORIGIN && process.env.CORS_ORIGIN.split(',')
