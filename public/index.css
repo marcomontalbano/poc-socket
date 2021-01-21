@@ -7,17 +7,28 @@ body {
 }
 
 #log {
-    height: 95vh;
+    width: 100%;
+    height: 90vh;
     background: #D7CCC8;
     padding: 25px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 90%;
 }
 
 #message {
-    height: 5vh;
     width: 100%;
+    height: 10vh;
     appearance: none;
     border: none;
     font-size: 18px;
-    padding: 20px;
+    padding: 0 20px;
     border-radius: 0;
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 10%;
 }
