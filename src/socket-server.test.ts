@@ -49,18 +49,18 @@ const promisifyOn = (client, event) => {
 }
 
 describe('socket-server', () => {
-    describe('when clients have the same "code"', () => {
+    describe('when clients have the same "code" and the same "name"', () => {
 
         let client1: Socket
         let client2: Socket
 
         beforeEach(() => {
             client1 = io(serverConfig.uri, {
-                query: `code=1234`
+                query: `code=1234&name=App1`
             });
 
             client2 = io(serverConfig.uri, {
-                query: `code=1234`
+                query: `code=1234&name=App1`
             });
         })
 
@@ -69,9 +69,9 @@ describe('socket-server', () => {
             client2.disconnect()
         })
 
-        it('should send an "initialized" event with the provided code', async () => {
-            await expect(promisifyOn(client1, 'initialized')).resolves.toEqual('1234')
-            await expect(promisifyOn(client2, 'initialized')).resolves.toEqual('1234')
+        it('should send an "initialize" event with the provided code', async () => {
+            await expect(promisifyOn(client1, 'initialize')).resolves.toEqual('1234')
+            await expect(promisifyOn(client2, 'initialize')).resolves.toEqual('1234')
         })
 
         it('should forward incoming messages to both clients', async () => {
@@ -82,18 +82,18 @@ describe('socket-server', () => {
         })
     })
 
-    describe('when clients have different "code"', () => {
+    describe('when clients have the same "code" but a different "name"', () => {
 
         let client1: Socket
         let client2: Socket
 
         beforeEach(() => {
             client1 = io(serverConfig.uri, {
-                query: `code=1234`
+                query: `code=1234&name=App1`
             });
 
             client2 = io(serverConfig.uri, {
-                query: `code=ABCD`
+                query: `code=1234&name=App2`
             });
         })
 
@@ -102,9 +102,54 @@ describe('socket-server', () => {
             client2.disconnect()
         })
 
-        it('should send an "initialized" event with the provided code', async () => {
-            await expect(promisifyOn(client1, 'initialized')).resolves.toEqual('1234')
-            await expect(promisifyOn(client2, 'initialized')).resolves.toEqual('ABCD')
+        it('should send an "initialize" event with the provided code', async () => {
+            await expect(promisifyOn(client1, 'initialize')).resolves.toEqual('1234')
+            await expect(promisifyOn(client2, 'initialize')).resolves.toEqual('1234')
+        })
+
+        it('should forward incoming messages to the right client', (done) => {
+            client1.emit('message', 'Hi there!');
+
+            const onMessage1 = jest.fn();
+            const onMessage2 = jest.fn();
+
+            client1.on('message', onMessage1);
+            client2.on('message', onMessage2);
+
+            setTimeout(() => {
+                expect(onMessage1).toBeCalledTimes(1)
+                expect(onMessage1).toBeCalledWith('Hi there!')
+
+                expect(onMessage2).toBeCalledTimes(0)
+
+                done();
+            }, 100)
+        })
+    })
+
+    describe('when clients have a different "code" but the same "name', () => {
+
+        let client1: Socket
+        let client2: Socket
+
+        beforeEach(() => {
+            client1 = io(serverConfig.uri, {
+                query: `code=1234&name=App1`
+            });
+
+            client2 = io(serverConfig.uri, {
+                query: `code=ABCD&name=App1`
+            });
+        })
+
+        afterEach(() => {
+            client1.disconnect()
+            client2.disconnect()
+        })
+
+        it('should send an "initialize" event with the provided code', async () => {
+            await expect(promisifyOn(client1, 'initialize')).resolves.toEqual('1234')
+            await expect(promisifyOn(client2, 'initialize')).resolves.toEqual('ABCD')
         })
 
         it('should forward incoming messages to the right client', (done) => {
@@ -133,6 +178,26 @@ describe('socket-server', () => {
 
         beforeEach(() => {
             uuidv4.mockReset()
+            client = io(serverConfig.uri, {
+                query: `name=App1`
+            });
+        })
+
+        afterEach(() => {
+            client.disconnect()
+        })
+
+        it('should send an "initialize" event with the generated code', async () => {
+            uuidv4.mockReturnValue('new-uuid');
+            await expect(promisifyOn(client, 'initialize')).resolves.toEqual('new-uuid')
+        })
+    })
+
+    describe(`when client doesn't have a "name"`, () => {
+
+        let client: Socket
+
+        beforeEach(() => {
             client = io(serverConfig.uri);
         })
 
@@ -140,9 +205,8 @@ describe('socket-server', () => {
             client.disconnect()
         })
 
-        it('should send an "initialized" event with the generated code', async () => {
-            uuidv4.mockReturnValue('new-uuid');
-            await expect(promisifyOn(client, 'initialized')).resolves.toEqual('new-uuid')
+        it('should throw an error', async () => {
+            await expect(promisifyOn(client, 'initialize_error')).resolves.toEqual('"name" is not defined.')
         })
     })
 })

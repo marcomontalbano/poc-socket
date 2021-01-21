@@ -8,7 +8,8 @@ type Props = {
 }
 
 type Query = {
-    code?: string
+    code?: string;
+    name?: string;
 }
 
 export const connect = ({ srv, corsOrigin }: Props): Server => {
@@ -18,16 +19,24 @@ export const connect = ({ srv, corsOrigin }: Props): Server => {
     });
 
     io.on('connection', (socket: Socket) => {
-        const { code = uuidv4() }: Query = socket.handshake.query
+        const { name, code = uuidv4() } = socket.handshake.query as Query
 
-        socket.join(code)
+        if (typeof name !== 'string' || name === '') {
+            socket.emit('initialize_error', '"name" is not defined.')
+            socket.disconnect()
+            return;
+        }
 
-        socket.emit('initialized', code)
+        const room = `${name}-${code}`;
+
+        socket.join(room)
+
+        socket.emit('initialize', code)
 
         socket.on('disconnect', () => {})
 
         socket.on('message', (message: string) => {
-            io.to(code).emit('message', message)
+            io.to(room).emit('message', message)
         })
     })
 
