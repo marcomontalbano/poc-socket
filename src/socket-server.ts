@@ -55,8 +55,12 @@ export const connect = ({ srv, corsOrigin }: Props): Server => {
             }
         })
 
-        socket.on('message', (message: string) => {
-            io.to(room).emit('message', message)
+        socket.on('payload', (payload) => {
+            // send to all clients, include sender
+            io.to(room).emit('payload', payload)
+
+            // // send to all clients, except sender
+            // socket.broadcast.to(room).emit('payload', payload)
         })
     })
 

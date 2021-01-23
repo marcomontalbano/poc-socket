@@ -15,7 +15,7 @@ export const Messages = () => {
 
     useEffect(() => {
         if (io.socket) {
-            io.socket.on('message', (payload: Payload) => {
+            io.socket.on('payload', (payload: Payload) => {
                 setLastPayload(payload)
             })
         }

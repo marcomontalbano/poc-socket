@@ -75,10 +75,10 @@ describe('socket-server', () => {
         })
 
         it('should forward incoming messages to both clients', async () => {
-            client1.emit('message', 'Hi there!');
+            client1.emit('payload', 'Hi there!');
 
-            await expect(promisifyOn(client1, 'message')).resolves.toEqual('Hi there!')
-            await expect(promisifyOn(client2, 'message')).resolves.toEqual('Hi there!')
+            await expect(promisifyOn(client1, 'payload')).resolves.toEqual('Hi there!')
+            await expect(promisifyOn(client2, 'payload')).resolves.toEqual('Hi there!')
         })
     })
 
@@ -108,13 +108,13 @@ describe('socket-server', () => {
         })
 
         it('should forward incoming messages to the right client', (done) => {
-            client1.emit('message', 'Hi there!');
+            client1.emit('payload', 'Hi there!');
 
             const onMessage1 = jest.fn();
             const onMessage2 = jest.fn();
 
-            client1.on('message', onMessage1);
-            client2.on('message', onMessage2);
+            client1.on('payload', onMessage1);
+            client2.on('payload', onMessage2);
 
             setTimeout(() => {
                 expect(onMessage1).toBeCalledTimes(1)
@@ -153,13 +153,13 @@ describe('socket-server', () => {
         })
 
         it('should forward incoming messages to the right client', (done) => {
-            client1.emit('message', 'Hi there!');
+            client1.emit('payload', 'Hi there!');
 
             const onMessage1 = jest.fn();
             const onMessage2 = jest.fn();
 
-            client1.on('message', onMessage1);
-            client2.on('message', onMessage2);
+            client1.on('payload', onMessage1);
+            client2.on('payload', onMessage2);
 
             setTimeout(() => {
                 expect(onMessage1).toBeCalledTimes(1)

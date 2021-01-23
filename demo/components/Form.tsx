@@ -21,7 +21,7 @@ export const Form = () => {
                 message
             }
 
-            io.socket.emit('message', payload);
+            io.socket.emit('payload', payload);
         }
 
         setMessage('');
