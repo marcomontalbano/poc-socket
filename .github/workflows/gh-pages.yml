@@ -1,0 +1,40 @@
+name: GitHub Pages
+
+on:
+  workflow_run:
+    workflows: ["Test"]
+    branches: [master]
+    types: 
+      - completed
+
+jobs:
+  github_pages:
+    name: Deploy "website" on GitHub Pages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Node 🧰
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: Install 📦
+        run: yarn --frozen-lockfile
+
+      - name: Build 🔧
+        run: yarn build:demo
+        env:
+          SOCKET_SERVER: socket-center.herokuapp.com
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: dist-demo
+          SINGLE_COMMIT: true

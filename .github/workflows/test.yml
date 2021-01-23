@@ -1,0 +1,55 @@
+name: Test
+
+on: ["push", "pull_request"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: [10.x, 12.x, 13.x, 14.x]
+
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v1
+
+    - name: Node 🧰
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node }}
+
+    - name: Install 📦
+      run: yarn --frozen-lockfile
+
+    # - name: Lint 🔍
+    #   run: yarn lint
+
+    - name: Test 🐛
+      run: yarn test
+
+
+  coverage:
+    needs: [test]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v1
+
+    - name: Node 🧰
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Install 📦
+      run: yarn --frozen-lockfile
+
+    - name: Coverage 🌈
+      run: yarn test
+
+    - name: Export `coverage`
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./coverage/lcov.info # optional (default value)
