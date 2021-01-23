@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 
 import { useSocket } from '../contexts/SocketContext';
 
+import { Arrow } from './Arrow';
+
 export const Welcome = () => {
 
     const io = useSocket()
 
-    const [name, setName] = useState<string>(localStorage.getItem('name') || '');
+    const [name, setName] = useState<string>(sessionStorage.getItem('name') || '');
 
     const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.currentTarget.value)
@@ -17,18 +19,21 @@ export const Welcome = () => {
 
         if (name) {
             io.connect({
-                uri: 'localhost:3000',
+                uri: process.env.SOCKET_SERVER || 'localhost:3000',
                 name: 'chat',
                 code: location.hash ? location.hash.replace(/^#/, '') : null
             })
 
-            localStorage.setItem('name', name)
+            sessionStorage.setItem('name', name)
         }
     }
 
     return (
-        <form onSubmit={ handleSubmit }>
-            <input type="text" onChange={ handleChangeName } value={ name } placeholder="Name" />
-        </form>
+        <div className="Welcome">
+            <form onSubmit={ handleSubmit }>
+                <input type="text" onChange={ handleChangeName } value={ name } placeholder="Write your name" />
+                <button><Arrow /></button>
+            </form>
+        </div>
     )
 }
