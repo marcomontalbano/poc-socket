@@ -93,3 +93,25 @@ input:focus, button:focus {
     overflow: auto;
     padding: 25px 8% 0;
 }
+
+.GitHub {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    color: black;
+    text-decoration: none;
+    fill: black;
+    transition: .2s color, .2s fill;
+}
+
+.GitHub svg {
+    vertical-align: middle;
+    margin-left: 5px;
+    margin-top: -4px;
+    width: 18px;
+}
+
+.GitHub:hover {
+    color: #607D8B;
+    fill: #607D8B;
+}

@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { useSocket } from '../contexts/SocketContext'
 
 import { Form } from './Form'
+import { GitHub } from './GitHub'
 import { Messages } from './Messages'
 import { Welcome } from './Welcome'
 
@@ -29,7 +30,12 @@ export const App = () => {
     }, [io.socket])
 
     if (!io.socket) {
-        return <Welcome />
+        return (
+            <>
+                <GitHub />
+                <Welcome />
+            </>
+        )
     }
 
     return (
