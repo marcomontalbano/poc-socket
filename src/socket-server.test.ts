@@ -56,11 +56,17 @@ describe('socket-server', () => {
 
         beforeEach(() => {
             client1 = io(serverConfig.uri, {
-                query: `code=1234&name=App1`
+                query: {
+                    code: '1234',
+                    name: 'App1'
+                }
             });
 
             client2 = io(serverConfig.uri, {
-                query: `code=1234&name=App1`
+                query: {
+                    code: '1234',
+                    name: 'App1'
+                }
             });
         })
 
@@ -89,11 +95,17 @@ describe('socket-server', () => {
 
         beforeEach(() => {
             client1 = io(serverConfig.uri, {
-                query: `code=1234&name=App1`
+                query: {
+                    code: '1234',
+                    name: 'App1'
+                }
             });
 
             client2 = io(serverConfig.uri, {
-                query: `code=1234&name=App2`
+                query: {
+                    code: '1234',
+                    name: 'App2'
+                }
             });
         })
 
@@ -134,11 +146,17 @@ describe('socket-server', () => {
 
         beforeEach(() => {
             client1 = io(serverConfig.uri, {
-                query: `code=1234&name=App1`
+                query: {
+                    code: '1234',
+                    name: 'App1'
+                }
             });
 
             client2 = io(serverConfig.uri, {
-                query: `code=ABCD&name=App1`
+                query: {
+                    code: 'ABCD',
+                    name: 'App1'
+                }
             });
         })
 
@@ -181,11 +199,15 @@ describe('socket-server', () => {
             uuidv4.mockReset()
 
             client1 = io(serverConfig.uri, {
-                query: `name=App1`
+                query: {
+                    name: 'App1'
+                }
             })
 
             client2 = io(serverConfig.uri, {
-                query: `name=App1`
+                query: {
+                    name: 'App1'
+                }
             })
         })
 

@@ -4,7 +4,7 @@ export const GitHub = () => {
     return (
         <a className="GitHub" href="https://github.com/marcomontalbano/poc-socket">
             view source
-            <svg version="1.1" id="Layer_1" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24">
+            <svg version="1.1" id="Layer_1" width="24px" height="24px" viewBox="0 0 24 24">
                 <path d="M15.5,22.7c0,0-0.1,0-0.1,0l-0.1-0.1l0-0.6c0-0.6,0-1.5,0-2.5c0-0.7-0.1-1.3-0.4-1.8c2.3-0.4,4.8-1.6,4.8-6.1
                     c0-1.2-0.4-2.3-1.1-3.2c0.2-0.6,0.3-1.7-0.2-3.1c-0.1-0.1-0.2-0.2-0.3-0.3c0,0-0.2-0.1-0.4-0.1c-0.6,0-1.5,0.2-3,1.2
                     C13.9,6,13,5.8,12,5.8c-1,0-1.9,0.1-2.8,0.3C7.8,5.2,6.8,5,6.2,5C6,5,5.9,5.1,5.8,5.1c-0.1,0-0.3,0.2-0.3,0.3C5,6.8,5.1,7.9,5.3,8.5

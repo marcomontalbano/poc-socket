@@ -11,21 +11,25 @@ export const Messages = () => {
     const scrollableItem = useRef()
 
     const [payloads, setPayloads] = useState<Payload[]>([])
-    const [lastPayload, setLastPayload] = useState<Payload>()
+    // const [lastPayload, setLastPayload] = useState<Payload>()
+
+    console.log('payloads from outside', payloads);
 
     useEffect(() => {
         if (io.socket) {
-            io.socket.on('payload', (payload: Payload) => {
-                setLastPayload(payload)
+            io.socket.off('payload').on('payload', (payload: Payload) => {
+                console.log('payloads from inside', payloads);
+                // setLastPayload(payload)
+                setPayloads([ ...payloads, payload ])
             })
         }
-    }, [io.socket])
+    }, [io.socket, payloads])
 
-    useEffect(() => {
-        if (lastPayload) {
-            setPayloads([ ...payloads, lastPayload ])
-        }
-    }, [lastPayload])
+    // useEffect(() => {
+    //     if (lastPayload) {
+    //         setPayloads([ ...payloads, lastPayload ])
+    //     }
+    // }, [lastPayload])
 
     useEffect(() => {
         setTimeout(() => {
