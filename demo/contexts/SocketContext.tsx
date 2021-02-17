@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { Socket } from 'socket.io-client';
 
-import { connect as connectClient, ConnectProps } from '../../src/socket-client';
+import { connect as connectClient, ConnectProps } from '../../src/simple/socket-client';
 
 type Context = {
     socket?: Socket

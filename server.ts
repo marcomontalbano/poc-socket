@@ -1,4 +1,4 @@
-import { connect } from './src/socket-server'
+import { connect } from './src/simple/socket-server'
 
 const corsOrigin = process.env.CORS_ORIGIN && process.env.CORS_ORIGIN.split(',')
 
