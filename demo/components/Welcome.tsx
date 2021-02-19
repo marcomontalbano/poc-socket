@@ -21,7 +21,7 @@ export const Welcome = () => {
             io.connect({
                 uri: process.env.SOCKET_SERVER || 'localhost:3000',
                 name: 'chat',
-                code: location.hash ? location.hash.replace(/^#/, '') : null
+                code: location.hash ? location.hash.replace(/^#/, '') : undefined
             })
 
             sessionStorage.setItem('name', name)

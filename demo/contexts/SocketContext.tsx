@@ -8,10 +8,10 @@ type Context = {
     connect: (props: ConnectProps) => void
 }
 
-const OriginalSocketContext = createContext<Context>(undefined);
+const OriginalSocketContext = createContext<Context>({connect: () => {}});
 
-export const SocketProvider = ({ children }) => {
-    const [socket, setSocket] = useState(undefined);
+export const SocketProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
+    const [socket, setSocket] = useState<Socket>();
 
     const connect = (props: ConnectProps) => {
         setSocket(connectClient(props))

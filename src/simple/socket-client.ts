@@ -6,7 +6,7 @@ export type ConnectProps = {
     code?: string;
 }
 
-const removeEmpty = (obj) => {
+const removeEmpty = (obj: any) => {
     for (var propName in obj) {
         if (obj[propName] === null || obj[propName] === undefined) {
             delete obj[propName];

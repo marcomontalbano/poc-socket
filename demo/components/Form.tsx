@@ -17,11 +17,11 @@ export const Form = () => {
         if (message !== '') {
             const payload: Payload = {
                 id: uuidv4(),
-                name: sessionStorage.getItem('name'),
+                name: sessionStorage.getItem('name') || '',
                 message
             }
 
-            io.socket.emit('payload', payload);
+            io.socket?.emit('payload', payload);
         }
 
         setMessage('');

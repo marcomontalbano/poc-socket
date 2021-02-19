@@ -8,7 +8,7 @@ export const Messages = () => {
 
     const io = useSocket()
 
-    const scrollableItem = useRef()
+    const scrollableItem = useRef<HTMLDivElement>(document.createElement('div'))
 
     const [payloads, setPayloads] = useState<Payload[]>([])
     // const [lastPayload, setLastPayload] = useState<Payload>()
@@ -33,10 +33,10 @@ export const Messages = () => {
 
     useEffect(() => {
         setTimeout(() => {
-            const element = scrollableItem.current as HTMLDivElement;
+            const element = scrollableItem.current;
             element.scrollTo(0, element.scrollHeight);
         }, 50)
-    }, [(scrollableItem.current as HTMLDivElement)?.innerHTML])
+    }, [scrollableItem.current.innerHTML])
 
     return (
         <div className="Messages">
