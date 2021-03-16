@@ -18,10 +18,6 @@ export const App = () => {
                 location.hash = code;
             })
 
-            io.socket.on('initialize_error', (message: string) => {
-                console.log('error', message)
-            })
-
             io.socket.on('disconnect', () => [
                 console.log('disconnected')
             ])
@@ -29,7 +25,7 @@ export const App = () => {
         }
     }, [io.socket])
 
-    if (!io.socket) {
+    if (!io.socket || io.error) {
         return (
             <>
                 <GitHub />
