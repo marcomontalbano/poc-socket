@@ -59,3 +59,12 @@ export type Room = RoomOptions & {
         [username: string]: User
     }
 }
+
+export enum SOCKET_EVENT {
+    Disconnect = 'disconnect',
+    Initialize = 'initialize',
+    Error = 'error',
+    Payload = 'payload',
+    PayloadToAll = 'payload_to_all',
+    PayloadBroadcast = 'payload_broadcast',
+}

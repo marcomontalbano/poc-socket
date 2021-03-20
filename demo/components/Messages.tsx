@@ -2,34 +2,23 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { useSocket } from '../contexts/SocketContext'
 
-import { Payload } from './types'
+import { MessagePayload } from './payload'
 
 export const Messages = () => {
 
-    const io = useSocket()
+    const { client } = useSocket()
 
     const scrollableItem = useRef<HTMLDivElement>(document.createElement('div'))
 
-    const [payloads, setPayloads] = useState<Payload[]>([])
-    // const [lastPayload, setLastPayload] = useState<Payload>()
-
-    console.log('payloads from outside', payloads);
+    const [messages, setMessages] = useState<MessagePayload[]>([])
 
     useEffect(() => {
-        if (io.socket) {
-            io.socket.off('payload').on('payload', (payload: Payload) => {
-                console.log('payloads from inside', payloads);
-                // setLastPayload(payload)
-                setPayloads([ ...payloads, payload ])
+        if (client) {
+            client.onPayload('message', (message) => {
+                setMessages([ ...messages, message ])
             })
         }
-    }, [io.socket, payloads])
-
-    // useEffect(() => {
-    //     if (lastPayload) {
-    //         setPayloads([ ...payloads, lastPayload ])
-    //     }
-    // }, [lastPayload])
+    }, [client, messages])
 
     useEffect(() => {
         setTimeout(() => {
@@ -41,9 +30,11 @@ export const Messages = () => {
     return (
         <div className="Messages">
             <div ref={ scrollableItem }>
-                { payloads.map(payload => (
-                    <div key={payload.id}><b>{payload.name}</b>: {payload.message}</div>
-                )) }
+                {
+                    messages.map(payload => (
+                        <div key={payload.id}><b>{payload.name}</b>: {payload.message}</div>
+                    ))
+                }
             </div>
         </div>
     )

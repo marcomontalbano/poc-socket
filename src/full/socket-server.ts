@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import * as http from 'http'
-import { ConnectData, ConnectQuery } from './types'
+import { ConnectData, ConnectQuery, SOCKET_EVENT } from './types'
 import { Rooms } from './socket-server/Rooms'
 
 type ServerProps = {
@@ -47,9 +47,9 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
 
             socket.join(room.id)
 
-            socket.emit('initialize', room.code)
+            socket.emit(SOCKET_EVENT.Initialize, room.code)
 
-            socket.on('disconnect', () => {
+            socket.on(SOCKET_EVENT.Disconnect, () => {
                 room.removeUser(username)
 
                 if (ioIsRoomEmpty(io, room.id)) {
@@ -57,15 +57,18 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
                 }
             })
 
-            socket.on('payload', (payload) => {
+            socket.on(SOCKET_EVENT.PayloadToAll, (payload) => {
                 // send to all clients, include sender
-                io.to(room.id).emit('payload', payload)
-
-                // // send to all clients, except sender
-                // socket.broadcast.to(roomId).emit('payload', payload)
+                io.to(room.id).emit(SOCKET_EVENT.Payload, payload)
             })
+
+            socket.on(SOCKET_EVENT.PayloadBroadcast, (payload) => {
+                // send to all clients, except sender
+                socket.broadcast.to(room.id).emit(SOCKET_EVENT.Payload, payload)
+            })
+
         } catch (error) {
-            socket.emit('error', error.toString())
+            socket.emit(SOCKET_EVENT.Error, error.toString())
             socket.disconnect()
         }
     })

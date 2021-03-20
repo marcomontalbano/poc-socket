@@ -9,23 +9,25 @@ import { Welcome } from './Welcome'
 
 export const App = () => {
 
-    const io = useSocket()
+    const { client, error } = useSocket()
 
     useEffect(() => {
-        if (io.socket) {
+        if (client) {
 
-            io.socket.on('initialize', (code: string) => {
+            client.onInitialize((code: string) => {
                 location.hash = code;
             })
 
-            io.socket.on('disconnect', () => [
+            client.onDisconnect(() => [
                 console.log('disconnected')
             ])
 
         }
-    }, [io.socket])
+    }, [client])
 
-    if (!io.socket || io.error) {
+    console.log(error)
+
+    if (!client || error) {
         return (
             <>
                 <GitHub />
