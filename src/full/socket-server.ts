@@ -1,11 +1,15 @@
 import { Server, Socket } from 'socket.io'
 import * as http from 'http'
-import { ConnectData, ConnectQuery, SOCKET_EVENT } from './types'
+import { ConnectData, ConnectQuery, GenericPayload, PayloadOptions, SOCKET_EVENT } from './types'
 import { Rooms } from './socket-server/Rooms'
 
 type ServerProps = {
     srv: number | http.Server;
     corsOrigin?: string[];
+}
+
+type OnPayloadOptions = PayloadOptions & {
+    payload: GenericPayload
 }
 
 function ioIsRoomEmpty(io: Server, roomId: string) {
@@ -57,14 +61,14 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
                 }
             })
 
-            socket.on(SOCKET_EVENT.PayloadToAll, (payload) => {
-                // send to all clients, include sender
-                io.to(room.id).emit(SOCKET_EVENT.Payload, payload)
-            })
-
-            socket.on(SOCKET_EVENT.PayloadBroadcast, (payload) => {
-                // send to all clients, except sender
-                socket.broadcast.to(room.id).emit(SOCKET_EVENT.Payload, payload)
+            socket.on(SOCKET_EVENT.Payload, ({ payload, includeSender }: OnPayloadOptions) => {
+                if (includeSender) {
+                    // send to all clients, include sender
+                    io.to(room.id).emit(SOCKET_EVENT.Payload, payload)
+                } else {
+                    // send to all clients, except sender
+                    socket.broadcast.to(room.id).emit(SOCKET_EVENT.Payload, payload)
+                }
             })
 
         } catch (error) {

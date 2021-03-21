@@ -65,6 +65,18 @@ export enum SOCKET_EVENT {
     Initialize = 'initialize',
     Error = 'error',
     Payload = 'payload',
-    PayloadToAll = 'payload_to_all',
-    PayloadBroadcast = 'payload_broadcast',
+}
+
+export type GenericPayload = {
+    type: string
+}
+
+export type PayloadOptions = {
+
+    /**
+     * Include sender into the recipient list
+     * 
+     * @defaultValue `true`
+     */
+    includeSender?: boolean
 }

@@ -1,23 +1,9 @@
 import { io, Socket } from 'socket.io-client'
-import { ConnectData, ConnectQuery, SOCKET_EVENT } from './types';
+import { ConnectData, ConnectQuery, GenericPayload, PayloadOptions, SOCKET_EVENT } from './types';
 
 export type ClientProps = {
     uri: string;
     data: ConnectData;
-}
-
-type SendOptions = {
-
-    /**
-     * Include sender into the recipient list
-     * 
-     * @defaultValue `true`
-     */
-    includeSender?: boolean
-}
-
-export type GenericPayload = {
-    type: string
 }
 
 export interface SocketClient<P extends GenericPayload> extends SocketIoClient<P> {}
@@ -60,11 +46,11 @@ class SocketIoClient<P extends GenericPayload> {
      * @param payload - Payload
      * @param options - Options for sending a payload
      */
-    send(payload: P, { includeSender = true }: SendOptions = {}) {
-        this.socket.emit(
-            includeSender ? SOCKET_EVENT.PayloadToAll : SOCKET_EVENT.PayloadBroadcast,
-            payload
-        )
+    send(payload: P, { includeSender = true }: PayloadOptions = {}) {
+        this.socket.emit(SOCKET_EVENT.Payload, {
+            payload,
+            includeSender
+        })
     }
 
     get active(): boolean {
