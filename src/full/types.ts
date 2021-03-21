@@ -1,7 +1,6 @@
 
 export type ConnectData = {
     room: RoomRequest
-    uid: string
 }
 
 /** Query parameters in "io" uri */

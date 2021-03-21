@@ -1,5 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import * as http from 'http'
+import crypto from 'crypto'
+
 import { ConnectData, ConnectQuery, GenericPayload, PayloadOptions, SOCKET_EVENT } from './types'
 import { Rooms } from './socket-server/Rooms'
 
@@ -32,18 +34,13 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
                 throw new Error('"data" field is mandatory when creating a Client')
             }
 
-            const {
-                room: roomRequest,
-                uid
-            } = JSON.parse(data) as ConnectData
+            const { room: roomRequest } = JSON.parse(data) as ConnectData
 
             if (!roomRequest) {
                 throw new Error('A Room Request has not been sent')
             }
 
-            if (!uid) {
-                throw new Error('UID is not set')
-            }
+            const uid = crypto.createHash('md5').update(socket.id).digest('hex')
 
             const room = rooms.getOrCreate(roomRequest)
 
