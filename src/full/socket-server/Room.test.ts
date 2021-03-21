@@ -42,7 +42,7 @@ describe('Room', () => {
 
         expect(room.users).toEqual({
             'john-doe': {
-                username: 'john-doe',
+                uid: 'john-doe',
                 timestamp: 1615447648806
             }
         })

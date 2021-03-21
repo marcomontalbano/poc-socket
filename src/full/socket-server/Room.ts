@@ -46,25 +46,25 @@ export class Room implements IRoom {
         return this._users.size >= this.rules.min && this._users.size <= this.rules.max
     }
 
-    removeUser(username: string): boolean {
-        return this._users.delete(username)
+    removeUser(uid: string): boolean {
+        return this._users.delete(uid)
     }
 
-    addUser(username: string): User {
+    addUser(uid: string): User {
         if (this.isFull()) {
             throw new Error('Room out of limits')
         }
 
-        if (this._users.has(username)) {
-            throw new Error(`"${username}" is already in use`)
+        if (this._users.has(uid)) {
+            throw new Error(`"${uid}" is already in use`)
         }
 
         const user: User = {
-            username,
+            uid,
             timestamp: Date.now()
         }
 
-        this._users.set(username, user)
+        this._users.set(uid, user)
 
         return user
     }

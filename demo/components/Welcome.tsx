@@ -21,7 +21,7 @@ export const Welcome = () => {
             io.connect({
                 uri: process.env.SOCKET_SERVER || 'localhost:3000',
                 data: {
-                    username: name,
+                    uid: name,
                     room: {
                         name: 'chat',
                         code: location.hash ? location.hash.replace(/^#/, '') : undefined,

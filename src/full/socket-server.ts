@@ -30,27 +30,27 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
 
             const {
                 room: roomRequest,
-                username
+                uid
             } = JSON.parse(data) as ConnectData
 
             if (!roomRequest) {
                 throw new Error('A Room Request has not been sent')
             }
 
-            if (!username) {
-                throw new Error('Username is not set')
+            if (!uid) {
+                throw new Error('UID is not set')
             }
 
             const room = rooms.getOrCreate(roomRequest)
 
-            room.addUser(username)
+            room.addUser(uid)
 
             socket.join(room.id)
 
             socket.emit(SOCKET_EVENT.Initialize, room.code)
 
             socket.on(SOCKET_EVENT.Disconnect, () => {
-                room.removeUser(username)
+                room.removeUser(uid)
 
                 if (ioIsRoomEmpty(io, room.id)) {
                     rooms.delete(room.id);

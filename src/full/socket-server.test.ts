@@ -37,7 +37,7 @@ const serverConfig = (() => {
     }
 })()
 
-function makeClient(name: string, code: string | undefined, username: string, [min, max]: [number, number]) {
+function makeClient(name: string, code: string | undefined, uid: string, [min, max]: [number, number]) {
     return connectClient<Payload>({
         uri: serverConfig.uri,
         data: {
@@ -46,14 +46,14 @@ function makeClient(name: string, code: string | undefined, username: string, [m
                 code,
                 rules: { min, max }
             },
-            username
+            uid
         }
     });
 }
 
-function makeConnectedClient(name: string, code: string | undefined, username: string, [min, max]: [number, number]): Promise<SocketClient<Payload>> {
+function makeConnectedClient(name: string, code: string | undefined, uid: string, [min, max]: [number, number]): Promise<SocketClient<Payload>> {
     return new Promise((resolve, reject) => {
-        const client = makeClient(name, code, username, [min, max])
+        const client = makeClient(name, code, uid, [min, max])
         client.onInitialize(() => resolve(client))
         client.onError((error) => reject(error))
     })
@@ -100,7 +100,7 @@ describe('socket-server', () => {
     })
 
     it('should send an "initialize" event with the provided code when a client connects', async () => {
-        client1 = makeClient(generateRoomName(), '1234', 'Username', [1, 2])
+        client1 = makeClient(generateRoomName(), '1234', 'uid', [1, 2])
 
         const callback = jest.fn()
         client1.onInitialize(callback)
@@ -119,8 +119,8 @@ describe('socket-server', () => {
             .mockReturnValueOnce('new-code2')
 
         const roomName = generateRoomName()
-        client1 = await makeClient(roomName, undefined, 'Username 1', [1, 2])
-        client2 = await makeClient(roomName, undefined, 'Username 2', [1, 2])
+        client1 = await makeClient(roomName, undefined, 'uid 1', [1, 2])
+        client2 = await makeClient(roomName, undefined, 'uid 2', [1, 2])
 
         const onInitialize1 = jest.fn()
         client1.onInitialize(onInitialize1)
@@ -139,8 +139,8 @@ describe('socket-server', () => {
 
     it('should be able to disconnect a client', async () => {
         const roomName = generateRoomName();
-        client1 = await makeConnectedClient(roomName, '1234', 'Username 1', [1, 2])
-        client2 = await makeConnectedClient(roomName, '1234', 'Username 2', [1, 2])
+        client1 = await makeConnectedClient(roomName, '1234', 'uid 1', [1, 2])
+        client2 = await makeConnectedClient(roomName, '1234', 'uid 2', [1, 2])
 
         const onDisconnect1 = jest.fn();
         const onDisconnect2 = jest.fn();
@@ -160,9 +160,9 @@ describe('socket-server', () => {
 
     it('should forward incoming messages to clients on the same room with the same code that are listening the that payload type', async () => {
         const roomName = generateRoomName();
-        client1 = await makeConnectedClient(roomName, '1234', 'Username 1', [1, 3])
-        client2 = await makeConnectedClient(roomName, '1234', 'Username 2', [1, 3])
-        client3 = await makeConnectedClient(roomName, '1234', 'Username 3', [1, 3])
+        client1 = await makeConnectedClient(roomName, '1234', 'uid 1', [1, 3])
+        client2 = await makeConnectedClient(roomName, '1234', 'uid 2', [1, 3])
+        client3 = await makeConnectedClient(roomName, '1234', 'uid 3', [1, 3])
 
         const onMessage1 = jest.fn();
         const onMessage2 = jest.fn();
@@ -196,8 +196,8 @@ describe('socket-server', () => {
 
     it('should forward incoming messages to clients on the same room with the same code excluding the sender (option includeSender set to false)', async () => {
         const roomName = generateRoomName();
-        client1 = await makeConnectedClient(roomName, '1234', 'Username 1', [1, 2])
-        client2 = await makeConnectedClient(roomName, '1234', 'Username 2', [1, 2])
+        client1 = await makeConnectedClient(roomName, '1234', 'uid 1', [1, 2])
+        client2 = await makeConnectedClient(roomName, '1234', 'uid 2', [1, 2])
 
         const onMessage1 = jest.fn();
         const onMessage2 = jest.fn();
@@ -223,8 +223,8 @@ describe('socket-server', () => {
 
     it('should NOT forward incoming messages to clients on the same room but with a different code', async () => {
         const roomName = generateRoomName();
-        client1 = await makeConnectedClient(roomName, '1234', 'Username 1', [1, 2])
-        client2 = await makeConnectedClient(roomName, 'ABCD', 'Username 2', [1, 2])
+        client1 = await makeConnectedClient(roomName, '1234', 'uid 1', [1, 2])
+        client2 = await makeConnectedClient(roomName, 'ABCD', 'uid 2', [1, 2])
 
         const onMessage1 = jest.fn();
         const onMessage2 = jest.fn();
@@ -249,8 +249,8 @@ describe('socket-server', () => {
     })
 
     it('should NOT forward incoming messages to clients on different room', async () => {
-        client1 = await makeConnectedClient(generateRoomName(), '1234', 'Username 1', [1, 2])
-        client2 = await makeConnectedClient(generateRoomName(), '1234', 'Username 2', [1, 2])
+        client1 = await makeConnectedClient(generateRoomName(), '1234', 'uid 1', [1, 2])
+        client2 = await makeConnectedClient(generateRoomName(), '1234', 'uid 2', [1, 2])
 
         const onMessage1 = jest.fn();
         const onMessage2 = jest.fn();
@@ -303,7 +303,7 @@ describe('socket-server', () => {
             })
         })
 
-        it(`should throw an error when client is created without a username`, async () => {
+        it(`should throw an error when client is created without a uid`, async () => {
             const client = io(serverConfig.uri, {
                 query: {
                     data: JSON.stringify({
@@ -317,7 +317,7 @@ describe('socket-server', () => {
 
             await waitForExpect(() => {
                 expect(callback).toBeCalledTimes(1)
-                expect(callback).toHaveBeenCalledWith('Error: Username is not set')
+                expect(callback).toHaveBeenCalledWith('Error: UID is not set')
             })
         })
     })

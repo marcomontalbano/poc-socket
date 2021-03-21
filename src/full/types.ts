@@ -1,7 +1,7 @@
 
 export type ConnectData = {
     room: RoomRequest
-    username: string
+    uid: string
 }
 
 /** Query parameters in "io" uri */
@@ -42,8 +42,8 @@ export type RoomOptions = {
 
 /** A User */
 export type User = {
-    /** Unique username. */
-    username: string
+    /** Unique UID */
+    uid: string
     /** Creation time */
     timestamp: number
 }
@@ -56,7 +56,7 @@ export type Room = RoomOptions & {
     timestamp: number
     /** List of users inside the Room */
     users: {
-        [username: string]: User
+        [uid: string]: User
     }
 }
 
