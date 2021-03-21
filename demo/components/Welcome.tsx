@@ -27,7 +27,7 @@ export const Welcome = () => {
                         code: location.hash ? location.hash.replace(/^#/, '') : undefined,
                         rules: {
                             min: 1,
-                            max: 2
+                            max: 10
                         }
                     }
                 }
