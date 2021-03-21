@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 
-import { connect as connectClient, ClientProps, SocketClient, GenericPayload } from './socket-client';
+import { GenericPayload } from './types';
+import { connect as connectClient, ClientProps, SocketClient } from './socket-client';
 
 type Context<Payload extends GenericPayload> = {
     client?: SocketClient<Payload>
