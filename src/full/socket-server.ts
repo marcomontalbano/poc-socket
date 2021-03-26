@@ -44,13 +44,17 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
 
             const room = rooms.getOrCreate(roomRequest)
 
-            room.addUser(uid)
+            const user = room.addUser(uid)
 
             socket.join(room.id)
 
             socket.emit(SOCKET_EVENT.Initialize, room.code)
 
+            socket.broadcast.to(room.id).emit(SOCKET_EVENT.UserConnect, user)
+
             socket.on(SOCKET_EVENT.Disconnect, () => {
+                socket.broadcast.to(room.id).emit(SOCKET_EVENT.UserDisconnect, user)
+
                 room.removeUser(uid)
 
                 if (ioIsRoomEmpty(io, room.id)) {

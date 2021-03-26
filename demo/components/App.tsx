@@ -14,13 +14,21 @@ export const App = () => {
     useEffect(() => {
         if (client) {
 
-            client.onInitialize((code: string) => {
+            client.onInitialize((code) => {
                 location.hash = code;
             })
 
-            client.onDisconnect(() => [
-                console.log('disconnected')
-            ])
+            client.onDisconnect((reason) => {
+                console.log('disconnected', reason)
+            })
+
+            client.onUserConnect((user) => {
+                console.log('user connect', user)
+            })
+
+            client.onUserDisconnect((user) => {
+                console.log('user disconnect', user)
+            })
 
         }
     }, [client])

@@ -64,6 +64,9 @@ export enum SOCKET_EVENT {
     Initialize = 'initialize',
     Error = 'error',
     Payload = 'payload',
+
+    UserConnect = 'user-connect',
+    UserDisconnect = 'user-disconnect',
 }
 
 export type GenericPayload = {
