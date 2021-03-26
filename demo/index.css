@@ -11,6 +11,11 @@ body {
     --color-default: #607D8B;
 }
 
+.error {
+    padding: 20px;
+    color: #c62828;
+}
+
 input {
     appearance: none;
     width: 100%;

@@ -25,8 +25,6 @@ export const App = () => {
         }
     }, [client])
 
-    console.log(error)
-
     if (!client || error) {
         return (
             <>

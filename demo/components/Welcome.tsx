@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useSocket } from '../contexts/SocketContext';
 
@@ -44,12 +44,14 @@ export const Welcome = () => {
                     <button><Arrow /></button>
                 </div>
 
+                { io.error && <div className="error">{ io.error }</div> }
+
                 {
                     !code && (
                         <fieldset className="room">
                             <legend>room settings</legend>
-                            <p>Min users: <input type="number" min="1" value={ roomMin } onChange={ (event) => setRoomMin(parseInt(event.currentTarget.value)) } placeholder="Room min" /></p>
-                            <p>Max users: <input type="number" min="1" value={ roomMax } onChange={ (event) => setRoomMax(parseInt(event.currentTarget.value)) } placeholder="Room min" /></p>
+                            <p>Min users: <input type="number" min="1" value={ roomMin } onChange={ (event) => setRoomMin(parseInt(event.currentTarget.value)) } /></p>
+                            <p>Max users: <input type="number" min="1" value={ roomMax } onChange={ (event) => setRoomMax(parseInt(event.currentTarget.value)) } /></p>
                         </fieldset>
                     )
                 }
