@@ -9,7 +9,7 @@ import { Welcome } from './Welcome'
 
 export const App = () => {
 
-    const { client, error } = useSocket()
+    const { client, connected } = useSocket()
 
     useEffect(() => {
         if (client) {
@@ -33,7 +33,7 @@ export const App = () => {
         }
     }, [client])
 
-    if (!client || error) {
+    if (!connected) {
         return (
             <>
                 <GitHub />
