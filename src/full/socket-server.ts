@@ -30,6 +30,13 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
         try {
             const { data } = socket.handshake.query as ConnectQuery
 
+            // const {
+            //     'x-forwarded-for': xForwardedFor,
+            //     'x-forwarded-port': xForwardedPort,
+            // } = socket.handshake.headers
+
+            // console.info(`[${xForwardedFor}:${xForwardedPort}] CONNECT`);
+
             if (!data) {
                 throw new Error('"data" field is mandatory when creating a Client')
             }
