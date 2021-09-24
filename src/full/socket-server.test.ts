@@ -38,7 +38,7 @@ const serverConfig = (() => {
 })()
 
 function makeClient(name: string, code: string | undefined, [min, max]: [number, number]) {
-    return connectClient<Payload>({
+    return connectClient({
         uri: serverConfig.uri,
         data: {
             room: {

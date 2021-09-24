@@ -23,7 +23,7 @@ export const App = () => {
             })
 
             client.onUserConnect((user, myself) => {
-                console.log('user connect', myself)
+                console.log('user connect', myself, user)
             })
 
             client.onUserDisconnect((user) => {
