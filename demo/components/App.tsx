@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { useSocket } from '../contexts/SocketContext'
+import { useSocket } from '../../src/full/SocketContext'
 
 import { Form } from './Form'
 import { GitHub } from './GitHub'
@@ -22,8 +22,8 @@ export const App = () => {
                 console.log('disconnected', reason)
             })
 
-            client.onUserConnect((user) => {
-                console.log('user connect', user)
+            client.onUserConnect((user, myself) => {
+                console.log('user connect', myself)
             })
 
             client.onUserDisconnect((user) => {

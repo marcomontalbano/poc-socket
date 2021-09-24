@@ -2,7 +2,7 @@ import { Server, Socket } from 'socket.io'
 import * as http from 'http'
 import crypto from 'crypto'
 
-import { ConnectData, ConnectQuery, GenericPayload, PayloadOptions, SOCKET_EVENT } from './types'
+import { ConnectData, ConnectQuery, GenericPayload, SOCKET_EVENT } from './types'
 import { Rooms } from './socket-server/Rooms'
 
 type ServerProps = {
@@ -10,7 +10,7 @@ type ServerProps = {
     corsOrigin?: string[];
 }
 
-type OnPayloadOptions = PayloadOptions & {
+type OnPayloadOptions = {
     payload: GenericPayload
 }
 
@@ -41,7 +41,7 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
                 throw new Error('"data" field is mandatory when creating a Client')
             }
 
-            const { room: roomRequest } = JSON.parse(data) as ConnectData
+            const { room: roomRequest, data: userData } = JSON.parse(data) as ConnectData
 
             if (!roomRequest) {
                 throw new Error('A Room Request has not been sent')
@@ -51,13 +51,14 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
 
             const room = rooms.getOrCreate(roomRequest)
 
-            const user = room.addUser(uid)
+            const user = room.addUser(uid, userData)
 
             socket.join(room.id)
 
-            socket.emit(SOCKET_EVENT.Initialize, room.code)
+            socket.emit(SOCKET_EVENT.Initialize, room.code, user)
 
-            socket.broadcast.to(room.id).emit(SOCKET_EVENT.UserConnect, user)
+            socket.broadcast.to(room.id).emit(SOCKET_EVENT.UserConnect, user, false)
+            socket.emit(SOCKET_EVENT.UserConnect, user, true)
 
             socket.on(SOCKET_EVENT.Disconnect, () => {
                 socket.broadcast.to(room.id).emit(SOCKET_EVENT.UserDisconnect, user)
@@ -69,17 +70,23 @@ export const connect = ({ srv, corsOrigin }: ServerProps): Server => {
                 }
             })
 
-            socket.on(SOCKET_EVENT.Payload, ({ payload, includeSender }: OnPayloadOptions) => {
-                if (includeSender) {
-                    // send to all clients, include sender
-                    io.to(room.id).emit(SOCKET_EVENT.Payload, payload)
-                } else {
-                    // send to all clients, except sender
-                    socket.broadcast.to(room.id).emit(SOCKET_EVENT.Payload, payload)
-                }
+            socket.on(SOCKET_EVENT.Payload, (payload) => {
+                socket.broadcast.to(room.id).emit(SOCKET_EVENT.Payload, payload, { user, myself: false })
+                socket.emit(SOCKET_EVENT.Payload, payload, { user, myself: true })
             })
 
-        } catch (error) {
+            // socket.on(SOCKET_EVENT.Payload, ({ payload, includeSender }: OnPayloadOptions) => {
+            //     if (includeSender) {
+            //         // send to all clients, include sender
+            //         io.to(room.id).emit(SOCKET_EVENT.Payload, payload)
+            //     } else {
+            //         // send to all clients, except sender
+            //         socket.broadcast.to(room.id).emit(SOCKET_EVENT.Payload, payload)
+            //     }
+            // })
+
+        } catch (_e) {
+            const error = _e as Error
             socket.emit(SOCKET_EVENT.Error, error.toString())
             socket.disconnect()
         }

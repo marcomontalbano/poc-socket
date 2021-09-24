@@ -1,5 +1,5 @@
 import { io, Socket } from 'socket.io-client'
-import { ConnectData, ConnectQuery, GenericPayload, PayloadOptions, SOCKET_EVENT, User } from './types';
+import { ConnectData, ConnectQuery, GenericPayload, PayloadExtra, SOCKET_EVENT, User } from './types';
 
 export type ClientProps = {
     uri: string;
@@ -8,9 +8,9 @@ export type ClientProps = {
 
 type DisconnectReason = 'io server disconnect' | 'io client disconnect' | 'ping timeout' | 'transport close' | 'transport error'
 
-export interface SocketClient<P extends GenericPayload> extends SocketIoClient<P> {}
+export interface SocketClient extends SocketIoClient {}
 
-class SocketIoClient<P extends GenericPayload> {
+class SocketIoClient {
     private socket: Socket
 
     constructor({ uri, data }: ClientProps) {
@@ -34,7 +34,7 @@ class SocketIoClient<P extends GenericPayload> {
         this.socket.on(SOCKET_EVENT.Error, callback)
     }
 
-    onUserConnect(callback: (user: User) => void) {
+    onUserConnect(callback: (user: User, myself: boolean) => void) {
         this.socket.on(SOCKET_EVENT.UserConnect, callback)
     }
 
@@ -42,10 +42,10 @@ class SocketIoClient<P extends GenericPayload> {
         this.socket.on(SOCKET_EVENT.UserDisconnect, callback)
     }
 
-    onPayload<Type extends P['type']>(type: Type, callback: (payload: Extract<P, { type: Type }>) => void) {
-        this.socket.on(SOCKET_EVENT.Payload, (payload: Extract<P, { type: Type }>) => {
+    onPayload(type: GenericPayload['type'], callback: (payload: any, extra: PayloadExtra) => void) {
+        this.socket.on(SOCKET_EVENT.Payload, (payload: any, extra: PayloadExtra) => {
             if (payload.type === type) {
-                callback(payload)
+                callback(payload, extra)
             }
         })
     }
@@ -56,11 +56,8 @@ class SocketIoClient<P extends GenericPayload> {
      * @param payload - Payload
      * @param options - Options for sending a payload
      */
-    send(payload: P, { includeSender = true }: PayloadOptions = {}) {
-        this.socket.emit(SOCKET_EVENT.Payload, {
-            payload,
-            includeSender
-        })
+    send(payload: GenericPayload) {
+        this.socket.emit(SOCKET_EVENT.Payload, payload)
     }
 
     get active(): boolean {
@@ -68,4 +65,4 @@ class SocketIoClient<P extends GenericPayload> {
     }
 }
 
-export const connect = <P extends GenericPayload>(clientProps: ClientProps): SocketClient<P> => new SocketIoClient<P>(clientProps)
+export const connect = (clientProps: ClientProps): SocketClient => new SocketIoClient(clientProps)

@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { useSocket } from '../contexts/SocketContext'
+import { useSocket } from '../../src/full/SocketContext'
+import { PayloadExtra } from '../../src/full/types'
 
 import { MessagePayload } from './payload'
+
+type Message = {
+    payload: MessagePayload
+    extra: PayloadExtra
+}
 
 export const Messages = () => {
 
@@ -10,12 +16,12 @@ export const Messages = () => {
 
     const scrollableItem = useRef<HTMLDivElement>(document.createElement('div'))
 
-    const [messages, setMessages] = useState<MessagePayload[]>([])
+    const [messages, setMessages] = useState<Message[]>([])
 
     useEffect(() => {
         if (client) {
-            client.onPayload('message', (message) => {
-                setMessages([ ...messages, message ])
+            client.onPayload('message', (payload, extra) => {
+                setMessages([ ...messages, { payload, extra } ])
             })
         }
     }, [client, messages])
@@ -31,8 +37,8 @@ export const Messages = () => {
         <div className="Messages">
             <div ref={ scrollableItem }>
                 {
-                    messages.map(payload => (
-                        <div key={payload.id}><b>{payload.name}</b>: {payload.message}</div>
+                    messages.map(({ payload, extra }) => (
+                        <div key={payload.id}><b>{extra.user.data.username}&nbsp;{extra.myself ? (<small>(me)</small>) : ''}</b>: {payload.message}</div>
                     ))
                 }
             </div>

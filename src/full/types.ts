@@ -1,7 +1,10 @@
 
 export type ConnectData = {
     room: RoomRequest
+    data: UserData
 }
+
+export interface UserData {}
 
 /** Query parameters in "io" uri */
 export type ConnectQuery = {
@@ -45,6 +48,8 @@ export type User = {
     uid: string
     /** Creation time */
     timestamp: number
+    /** Additional data */
+    data: UserData
 }
 
 /** A Room */
@@ -67,18 +72,15 @@ export enum SOCKET_EVENT {
 
     UserConnect = 'user-connect',
     UserDisconnect = 'user-disconnect',
+    UserList = 'user-list',
+    CurrentUser = 'current-user',
 }
 
-export type GenericPayload = {
+export interface GenericPayload {
     type: string
 }
 
-export type PayloadOptions = {
-
-    /**
-     * Include sender into the recipient list
-     * 
-     * @defaultValue `true`
-     */
-    includeSender?: boolean
+export interface PayloadExtra {
+    user: User
+    myself: boolean
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 
-import { SocketProvider } from './contexts/SocketContext'
+import { SocketProvider } from '../src/full/SocketContext'
 
 import { App } from './components/App'
 

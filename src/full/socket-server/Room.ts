@@ -1,4 +1,4 @@
-import { Room as IRoom, RoomOptions, User } from '../types';
+import { UserData, Room as IRoom, RoomOptions, User } from '../types';
 
 export class Room implements IRoom {
     private _name
@@ -50,7 +50,7 @@ export class Room implements IRoom {
         return this._users.delete(uid)
     }
 
-    addUser(uid: string): User {
+    addUser(uid: string, data: UserData): User {
         if (this.isFull()) {
             throw new Error('Room out of limits')
         }
@@ -61,7 +61,8 @@ export class Room implements IRoom {
 
         const user: User = {
             uid,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            data
         }
 
         this._users.set(uid, user)

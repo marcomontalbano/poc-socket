@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-import { useSocket } from '../contexts/SocketContext'
+import { useSocket } from '../../src/full/SocketContext'
 
 export const Form = () => {
 
@@ -16,7 +16,6 @@ export const Form = () => {
             client?.send({
                 type: 'message',
                 id: uuidv4(),
-                name: sessionStorage.getItem('name') || '',
                 message
             })
         }

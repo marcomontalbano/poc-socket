@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { useSocket } from '../contexts/SocketContext';
+import { useSocket } from '../../src/full/SocketContext';
 
 import { Arrow } from './Arrow';
 
@@ -28,11 +28,12 @@ export const Welcome = () => {
                             min: roomMin,
                             max: roomMax
                         }
+                    },
+                    data: {
+                        username: name
                     }
                 }
             })
-
-            sessionStorage.setItem('name', name)
         }
     }
 
