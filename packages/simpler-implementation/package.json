@@ -1,0 +1,25 @@
+{
+  "name": "@realtime/simpler-implementation",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Marco Montalbano <me@marcomontalbano.com>",
+  "homepage": "https://github.com/marcomontalbano/poc-socket#readme",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcomontalbano/poc-socket.git",
+    "directory": "packages/types"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@types/uuid": "^8.3.1",
+    "socket.io": "^4.3.1",
+    "socket.io-client": "^4.3.2",
+    "uuid": "^8.3.2"
+  }
+}

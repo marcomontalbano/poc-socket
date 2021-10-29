@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "jsx": "react",
+    "lib": ["DOM"]
+  },
+  "references": [
+    {"path": "../types"},
+    {"path": "../sdk.js"},
+    {"path": "../sdk-react.js"}
+  ]
+}

@@ -1,7 +1,11 @@
-node_modules
-/.parcel-cache
-/.cache
-/yarn-error.log
-/dist-*
+/node_modules
+yarn-error.log
 /coverage
 /.env
+/lerna-debug.log
+
+/packages/**/node_modules
+/packages/**/dist
+
+package.json.lerna_backup
+.parcel-cache

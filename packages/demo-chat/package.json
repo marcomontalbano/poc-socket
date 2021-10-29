@@ -1,0 +1,36 @@
+{
+  "name": "@realtime/demo-chat",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Marco Montalbano <me@marcomontalbano.com>",
+  "homepage": "https://github.com/marcomontalbano/poc-socket#readme",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcomontalbano/poc-socket.git",
+    "directory": "packages/demo-chat"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "start": "parcel ./src/index.html"
+  },
+  "dependencies": {
+    "@realtime/sdk-react.js": "^0.0.0",
+    "@realtime/sdk.js": "^0.0.0",
+    "@realtime/types": "^0.0.0",
+    "@types/react": "^17.0.30",
+    "@types/react-dom": "^17.0.9",
+    "@types/uuid": "^8.3.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.0"
+  }
+}

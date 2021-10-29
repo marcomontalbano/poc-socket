@@ -1,0 +1,24 @@
+{
+  "name": "@realtime/sdk.js",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Marco Montalbano <me@marcomontalbano.com>",
+  "homepage": "https://github.com/marcomontalbano/poc-socket#readme",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcomontalbano/poc-socket.git",
+    "directory": "packages/sdk.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.3.0"
+  }
+}
