@@ -18,18 +18,19 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "start": "CORS_ORIGIN=http://localhost:1234 nodemon ./src/bin/run.ts"
+    "dev": "CORS_ORIGIN=http://localhost:1234 nodemon ./src/bin/run.ts",
+    "serve": "node ./dist/bin/run.js"
   },
   "dependencies": {
     "@realtime/types": "^0.0.0",
     "@types/uuid": "^8.3.1",
-    "socket.io": "^4.3.0",
+    "socket.io": "^4.3.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@realtime/sdk.js": "^0.0.0",
-    "nodemon": "^2.0.13",
-    "socket.io-client": "^4.3.0",
-    "ts-node": "^10.3.0"
+    "nodemon": "^2.0.14",
+    "socket.io-client": "^4.3.2",
+    "ts-node": "^10.4.0"
   }
 }

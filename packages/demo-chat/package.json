@@ -5,8 +5,6 @@
   "author": "Marco Montalbano <me@marcomontalbano.com>",
   "homepage": "https://github.com/marcomontalbano/poc-socket#readme",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -17,14 +15,17 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "start": "parcel ./src/index.html"
+    "dev": "parcel ./src/index.html",
+    "build": "parcel build ./src/index.html --dist-dir ./dist --public-url /poc-socket/",
+    "postbuild": "touch ./dist/.nojekyll",
+    "serve": "npx serve ./dist -p 1234"
   },
   "dependencies": {
     "@realtime/sdk-react.js": "^0.0.0",
     "@realtime/sdk.js": "^0.0.0",
     "@realtime/types": "^0.0.0",
-    "@types/react": "^17.0.30",
-    "@types/react-dom": "^17.0.9",
+    "@types/react": "^17.0.34",
+    "@types/react-dom": "^17.0.11",
     "@types/uuid": "^8.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
