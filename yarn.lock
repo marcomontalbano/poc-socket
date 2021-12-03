@@ -1438,31 +1438,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@parcel/transformer-typescript-types@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@parcel/transformer-typescript-types@npm:2.0.0"
-  dependencies:
-    "@parcel/plugin": ^2.0.0
-    "@parcel/source-map": ^2.0.0
-    "@parcel/ts-utils": ^2.0.0
-    nullthrows: ^1.1.1
-  peerDependencies:
-    typescript: ">=3.0.0"
-  checksum: 58242bf7ab11e85bc1b3c0613d2275e8fa5a3e98096f85ec9e161717ccad75d8951d8c5d45442e653af9d042e880d45b226e41aab9861a02abbdec999c5a2505
-  languageName: node
-  linkType: hard
-
-"@parcel/ts-utils@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@parcel/ts-utils@npm:2.0.0"
-  dependencies:
-    nullthrows: ^1.1.1
-  peerDependencies:
-    typescript: ">=3.0.0"
-  checksum: 3bf611267b90b6e505221c5d7d912e4fcd0dca8275647caca6bf22c8293ae8d34108417ac1301195b87624fa9418b6afa1d6ea1bfa233fe90301c67f80a29537
-  languageName: node
-  linkType: hard
-
 "@parcel/types@npm:^2.0.0":
   version: 2.0.0
   resolution: "@parcel/types@npm:2.0.0"
@@ -1538,7 +1513,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@realtime/demo-chat@workspace:packages/demo-chat"
   dependencies:
-    "@parcel/transformer-typescript-types": ^2.0.0
     "@realtime/sdk-react.js": ^0.0.0
     "@realtime/sdk.js": ^0.0.0
     "@realtime/types": ^0.0.0
@@ -1576,7 +1550,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@realtime/server@workspace:packages/server"
   dependencies:
-    "@realtime/sdk.js": ^0.0.0
     "@realtime/types": ^0.0.0
     "@types/uuid": ^8.3.1
     nodemon: ^2.0.14

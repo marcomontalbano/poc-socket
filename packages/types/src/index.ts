@@ -78,6 +78,7 @@ export enum SOCKET_EVENT {
 
 export interface GenericPayload {
     type: string
+    [key: string]: unknown
 }
 
 export interface PayloadExtra {

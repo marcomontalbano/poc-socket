@@ -1,29 +1,24 @@
-import { Server } from 'socket.io'
 import * as http from 'http'
 import * as uuid from 'uuid'
+import crypto from 'crypto'
 
-const { v4: generateRoomName } = jest.requireActual('uuid')
+import { Server } from 'socket.io'
+import { io } from 'socket.io-client'
 
 import waitForExpect from 'wait-for-expect'
 
-import { connect as connectServer } from '.'
-import { connect as connectClient, SocketClient } from '@realtime/sdk.js'
-import { io } from 'socket.io-client'
+import { connect as connectServer } from './packages/server/src'
+import { connect as connectClient, SocketClient } from './packages/sdk.js/src'
 
+const { v4: generateRoomName } = jest.requireActual('uuid')
+
+jest.spyOn(global.Date, 'now').mockReturnValue(1638403200000)
 jest.mock('uuid');
 
 const uuidv4 = uuid.v4 as jest.Mock;
 
 let httpServer: http.Server
 let server: Server
-
-type Payload = {
-    type: 'message'
-    message: string
-} | {
-    type: 'greet',
-    from: string
-}
 
 const serverConfig = (() => {
     const defaults = {
@@ -45,18 +40,27 @@ function makeClient(name: string, code: string | undefined, [min, max]: [number,
                 name,
                 code,
                 rules: { min, max }
+            },
+            data: {
+
             }
         }
-    });
+    })
 }
 
-function makeConnectedClient(name: string, code: string | undefined, [min, max]: [number, number]): Promise<SocketClient<Payload>> {
+function makeConnectedClient(name: string, code: string | undefined, [min, max]: [number, number]): Promise<SocketClient> {
     return new Promise((resolve, reject) => {
         const client = makeClient(name, code, [min, max])
         client.onInitialize(() => resolve(client))
         client.onError((error) => reject(error))
     })
 }
+
+const getMockedUser = (uid: string) => ({
+    uid,
+    timestamp: 1638403200000,
+    data: {}
+})
 
 beforeAll(() => {
     httpServer = http.createServer(() => console.log(' -/- '))
@@ -78,9 +82,23 @@ afterAll((done) => {
 
 describe('socket-server', () => {
 
-    let client1: SocketClient<Payload>
-    let client2: SocketClient<Payload>
-    let client3: SocketClient<Payload>
+    let client1: SocketClient
+    let client2: SocketClient
+    let client3: SocketClient
+
+    let mockCrypto: jest.Mock
+
+    beforeEach(() => {
+        /** @ts-ignore */
+        mockCrypto = jest.spyOn(crypto, 'createHash').mockReturnValue({
+            update: jest.fn().mockReturnThis(),
+            digest: jest.fn()
+                .mockReturnValueOnce('encrypt-uid-1')
+                .mockReturnValueOnce('encrypt-uid-2')
+                .mockReturnValueOnce('encrypt-uid-3')
+                .mockReturnValueOnce('encrypt-uid-4')
+        })
+    })
 
     afterEach(() => {
         if (client1?.active) {
@@ -96,6 +114,7 @@ describe('socket-server', () => {
         }
 
         uuidv4.mockReset()
+        mockCrypto.mockReset()
     })
 
     it('should send an "initialize" event with the provided code when a client connects', async () => {
@@ -106,7 +125,7 @@ describe('socket-server', () => {
 
         await waitForExpect(() => {
             expect(callback).toBeCalledTimes(1)
-            expect(callback).toBeCalledWith('1234')
+            expect(callback).toBeCalledWith('1234', getMockedUser('encrypt-uid-1'))
         })
     })
 
@@ -129,10 +148,10 @@ describe('socket-server', () => {
 
         await waitForExpect(() => {
             expect(onInitialize1).toBeCalledTimes(1)
-            expect(onInitialize1).toBeCalledWith('new-code1')
+            expect(onInitialize1).toBeCalledWith('new-code1', getMockedUser('encrypt-uid-1'))
 
             expect(onInitialize2).toBeCalledTimes(1)
-            expect(onInitialize2).toBeCalledWith('new-code2')
+            expect(onInitialize2).toBeCalledWith('new-code2', getMockedUser('encrypt-uid-2'))
         })
     })
 
@@ -157,7 +176,7 @@ describe('socket-server', () => {
         })
     })
 
-    it('should forward incoming messages to clients on the same room with the same code that are listening the that payload type', async () => {
+    it('should forward incoming messages to clients on the same room with the same code that are listening to that payload type', async () => {
         const roomName = generateRoomName();
         client1 = await makeConnectedClient(roomName, '1234', [1, 3])
         client2 = await makeConnectedClient(roomName, '1234', [1, 3])
@@ -171,7 +190,7 @@ describe('socket-server', () => {
         client2.onPayload('greet', onMessage2);
         client3.onPayload('message', onMessage3);
 
-        client1.send({
+        client3.send({
             type: 'message',
             message: 'Hi there!'
         });
@@ -181,7 +200,7 @@ describe('socket-server', () => {
             expect(onMessage1).toBeCalledWith({
                 type: 'message',
                 message: 'Hi there!'
-            })
+            }, { user: getMockedUser('encrypt-uid-3'), myself: false })
 
             expect(onMessage2).toBeCalledTimes(0)
 
@@ -189,34 +208,7 @@ describe('socket-server', () => {
             expect(onMessage3).toBeCalledWith({
                 type: 'message',
                 message: 'Hi there!'
-            })
-        })
-    })
-
-    it('should forward incoming messages to clients on the same room with the same code excluding the sender (option includeSender set to false)', async () => {
-        const roomName = generateRoomName();
-        client1 = await makeConnectedClient(roomName, '1234', [1, 2])
-        client2 = await makeConnectedClient(roomName, '1234', [1, 2])
-
-        const onMessage1 = jest.fn();
-        const onMessage2 = jest.fn();
-
-        client1.onPayload('message', onMessage1);
-        client2.onPayload('message', onMessage2);
-
-        client1.send({
-            type: 'message',
-            message: 'Hi there!'
-        }, { includeSender: false });
-
-        await waitForExpect(() => {
-            expect(onMessage1).toBeCalledTimes(0)
-
-            expect(onMessage2).toBeCalledTimes(1)
-            expect(onMessage2).toBeCalledWith({
-                type: 'message',
-                message: 'Hi there!'
-            })
+            }, { user: getMockedUser('encrypt-uid-3'), myself: true })
         })
     })
 
@@ -241,7 +233,7 @@ describe('socket-server', () => {
             expect(onMessage1).toBeCalledWith({
                 type: 'message',
                 message: 'Hi there!'
-            })
+            }, { user: getMockedUser('encrypt-uid-1'), myself: true })
 
             expect(onMessage2).toBeCalledTimes(0)
         })
@@ -267,7 +259,7 @@ describe('socket-server', () => {
             expect(onMessage1).toBeCalledWith({
                 type: 'message',
                 message: 'Hi there!'
-            })
+            }, { user: getMockedUser('encrypt-uid-1'), myself: true })
 
             expect(onMessage2).toBeCalledTimes(0)
         })

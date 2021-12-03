@@ -28,7 +28,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@realtime/sdk.js": "^0.0.0",
     "nodemon": "^2.0.14",
     "socket.io-client": "^4.3.2",
     "ts-node": "^10.4.0"

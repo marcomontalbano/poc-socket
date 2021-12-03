@@ -38,11 +38,12 @@ describe('Room', () => {
             }
         })
 
-        room.addUser('john-doe', {})
+        room.addUser('john-doe', { firstName: 'john' })
 
         expect(room.users).toEqual({
             'john-doe': {
                 uid: 'john-doe',
+                data: { firstName: 'john' },
                 timestamp: 1615447648806
             }
         })
