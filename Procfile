@@ -1,1 +1,1 @@
-web: yarn serve:server
+web: yarn workspace @realtime/server run serve
