@@ -6,6 +6,8 @@
 /packages/**/node_modules
 /packages/**/dist
 
+*.tsbuildinfo
+
 package.json.lerna_backup
 .parcel-cache
 
