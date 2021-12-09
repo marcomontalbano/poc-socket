@@ -11,7 +11,6 @@
   },
   "scripts": {
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM')\"",
-    "postinstall": "yarn build",
     "clean": "rm -rf node_modules/ output/ yarn.lock */*/node_modules */*/dist */*/tsconfig.tsbuildinfo */*/yarn.lock",
     "build": "tsc --build packages/**/tsconfig.json && yarn workspaces foreach -tiv --exclude root run build",
     "ts:check": "yarn workspaces foreach -tv --exclude root exec tsc --noEmit",
