@@ -27,14 +27,14 @@ jobs:
         run: yarn --immutable
 
       - name: Build 🔧
-        run: yarn build:demo
+        run: yarn build
         env:
           SOCKET_SERVER: socket-center.herokuapp.com
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: dist-demo
-          SINGLE_COMMIT: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: packages/demo-chat/dist
+          single-commit: true
