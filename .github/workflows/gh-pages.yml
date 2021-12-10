@@ -21,10 +21,10 @@ jobs:
       - name: Node 🧰
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 16.x
 
       - name: Install 📦
-        run: yarn --frozen-lockfile
+        run: yarn --immutable
 
       - name: Build 🔧
         run: yarn build:demo
